@@ -1,0 +1,19 @@
+#!/bin/bash
+printf "clang-format using LLVM style\n"
+DIFF=$(clang-format -style=LLVM $1 | diff -u $1 -)
+if [ "$DIFF" != "" ]
+then
+    clang-format -style=LLVM $1 | diff -u $1 - | colordiff
+    read -p "Apply clang-format changes? (y/n) " -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        printf "\nPatching..."
+        clang-format -i -style=LLVM $1
+    else
+        printf "\nExiting without changes"
+    fi
+else
+    printf "\nNo changes found"
+fi
+printf "\n"
+
